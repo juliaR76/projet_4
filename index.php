@@ -12,7 +12,7 @@ catch (exception $e)
 //recuperer les donnees de la table
 $req = $bdd->prepare('SELECT id, titre, auteur, contenu, DATE_FORMAT(date_ajout, \'%d/%m/%Y à %Hh%imin\') 
 AS date_ajout_fr
-FROM billet ORDER BY id DESC');
+FROM billet');
 $req->execute();
 ?>
 
@@ -38,10 +38,10 @@ $req->execute();
           <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ml-auto">
               <li class="nav-item">
-                <a class="nav-link" href="index.html">Accueil</a>
+                <a class="nav-link" href="index.php">Accueil</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="post.html">Articles</a>
+                <a class="nav-link" href="post.php">Articles</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="contact.html">Contact</a>
@@ -76,7 +76,7 @@ $req->execute();
         <div class="row">
           <div class="col-lg-8 col-md-10 mx-auto">
             <div class="post-preview">
-              <a href="post.html">
+              <a href="post.php?billet=<?= $donnee['id'] ?>">
                 <h2 class="post-title"><?= htmlspecialchars($donnee['titre']) ?></h2>
               </a>
               <p><?= htmlspecialchars($donnee['contenu'])?></p>
