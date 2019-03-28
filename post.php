@@ -17,6 +17,14 @@ $req->execute([
     "id" => $_GET['billet']
 ]);
 
+//recupere les commentaire
+
+$req=$bdd->prepare('SELECT id, id_billet, auteur, comment, DATE_FORMAT(date_comment, \'%d/%m/%Y à %Hh%imin%ss\')
+AS date_comment_fr FROM commentaire WHERE id_billet=? ORDER BY date_comment');
+$req->execute(array(
+    $_GET['billet']
+));
+
 ?>
 
 <!DOCTYPE html>
@@ -47,9 +55,6 @@ $req->execute([
             <a class="nav-link" href="index.php">Accueil</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="post.php">Articles</a>
-          </li>
-          <li class="nav-item">
             <a class="nav-link" href="contact.html">contact</a>
           </li>
           <li class="nav-item">
@@ -67,11 +72,8 @@ $req->execute([
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
           <div class="post-heading">
-            <h1>Man must explore, and this is exploration at its greatest</h1>
-            <h2 class="subheading">Problems look mighty small from 150 miles up</h2>
-            <span class="meta">Posted by
-              <a href="#">Start Bootstrap</a>
-              on August 24, 2019</span>
+            <h1><?= htmlspecialchars($billet['titre']) ?></h1>
+            <span class="meta"><?= htmlspecialchars($billet['auteur']) ?></span>
           </div>
         </div>
       </div>
@@ -80,17 +82,28 @@ $req->execute([
 
   <!-- Post Content -->
   <article>
-<?php while($donnee = $req->fetch()){ ?>
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-8 col-md-10 mx-auto">
-          <h2 class="section-heading"><?= htmlspecialchars($donnee['titre']) ?></h2>
-          <P><?= htmlspecialchars($donnee['contenu'])?></p>
-          <p>De <?= htmlspecialchars($donnee['auteur']) ?>, le <?= htmlspecialchars($donnee['date_ajout_fr']) ?> </p> 
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-preview">
+              <a href="post.php?billet=<?= $billet['id'] ?>">
+                <h2 class="post-title"><?= htmlspecialchars($billet['titre']) ?></h2>
+              </a>
+              <p><?= htmlspecialchars($billet['contenu'])?></p>
+              <p class="post-meta">Posted by <?= htmlspecialchars($billet['auteur']) ?>, le <?= htmlspecialchars($billet['date_ajout_fr']) ?></p>
+              <i class="far fa-comment-alt"></i><a href="post.php?billet=<?= $billet['id'] ?>">commentaire(s):</a>
+              <hr>
+<?php while($comment = $req->fetch()){ ?>   
+              <p><strong><?= htmlspecialchars($comment['auteur']) ?></strong> le <?=$comment['date_comment_fr'] ?></p>
+              <p>
+                <?= htmlspecialchars($comment['comment']) ?>
+              </p>
 <?php } ?>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+
   </article>
   <hr>
 
