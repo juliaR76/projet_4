@@ -82,30 +82,53 @@ $req->execute(array(
 
   <!-- Post Content -->
   <article>
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-8 col-md-10 mx-auto">
-            <div class="post-preview">
-              <a href="post.php?billet=<?= $billet['id'] ?>">
-                <h2 class="post-title"><?= htmlspecialchars($billet['titre']) ?></h2>
-              </a>
-              <p><?= htmlspecialchars($billet['contenu'])?></p>
-              <p class="post-meta">Posted by <?= htmlspecialchars($billet['auteur']) ?>, le <?= htmlspecialchars($billet['date_ajout_fr']) ?></p>
-              <i class="far fa-comment-alt"></i><a href="post.php?billet=<?= $billet['id'] ?>">commentaire(s):</a>
-              <hr>
-<?php while($comment = $req->fetch()){ ?>   
-              <p><strong><?= htmlspecialchars($comment['auteur']) ?></strong> le <?=$comment['date_comment_fr'] ?></p>
-              <p>
-                <?= htmlspecialchars($comment['comment']) ?>
-              </p>
-<?php } ?>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-preview">
+            <a href="post.php?billet=<?= $billet['id'] ?>">
+              <h2 class="post-title"><?= htmlspecialchars($billet['titre']) ?></h2>
+            </a>
+            <p><?= htmlspecialchars($billet['contenu'])?></p>
+            <p class="post-meta">Posted by <?= htmlspecialchars($billet['auteur']) ?>, le <?= htmlspecialchars($billet['date_ajout_fr']) ?></p>
+            <p>
+              <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                <i class="far fa-comment-alt"></i>
+              </button>
+            </p>
+
+            <div class="collapse" id="collapseExample">
+              <div class="card card-body">
+              <?php while($comment = $req->fetch()){ ?>   
+                <p><strong><?= htmlspecialchars($comment['auteur']) ?></strong> le <?=$comment['date_comment_fr'] ?></p>
+                <p><?= htmlspecialchars($comment['comment']) ?></p> 
+                <?php } ?>  
+              </div>
             </div>
+   
+            <hr>         
+<!--commentaire-->
+            <div class="collapse" id="collapseExample">
+              <div class="card card-body">  
+                <form action= "post.php?billet=<?= $_GET['billet'] ?>" method= "post">
+                  <div class="form-group">
+                    <label for="formGroupExampleInput">Pseudo</label>
+                    <input type="text" name= "auteur" class="form-control" id="formGroupExampleInput" placeholder="Example input">
+                  </div>
+                  <div class="form-group">
+                    <label for="formGroupExampleInput2">Commentaire</label>
+                    <input type="text" name= "comment"class="form-control" id="formGroupExampleInput2" placeholder="Another input">
+                  </div>
+                  <button type="submit" class="btn btn-primary">Publier</button>
+                  <button type="button" class="btn btn-primary">Annuler</button>
+                </form>  
+              </div>
+            </div>            
           </div>
         </div>
       </div>
-
+    </div>
   </article>
-  <hr>
 
   <!-- Bootstrap core JavaScript -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
