@@ -76,13 +76,14 @@ $req->execute();
         <div class="row">
           <div class="col-lg-8 col-md-10 mx-auto">
             <div class="post-preview">
-              <a href="post.php?billet=<?= $donnee['id'] ?>">
-                <h2 class="post-title"><?= htmlspecialchars($donnee['titre']) ?></h2>
+              <a href="post.php?billet=<?= $billet['id'] ?>">
+                <h2 class="post-title"><strong><?= htmlspecialchars($billet['titre']) ?></strong></h2>
               </a>
-              <p><?= htmlspecialchars($donnee['contenu'])?></p>
-              <p class="post-meta">Posted by <?= htmlspecialchars($donnee['auteur']) ?>, le <?= htmlspecialchars($donnee['date_ajout_fr']) ?></p>
-            </div>
+              <p><?= htmlspecialchars($billet['contenu'])?></p>
+              <p class="post-meta">Posted by <?= htmlspecialchars($billet['auteur']) ?>, le <?= htmlspecialchars($billet['date_ajout_fr']) ?></p>
+              <i class="far fa-comment-alt"></i><a href="post.php?billet=<?= $billet['id'] ?>"> commentaire</a>
             <hr>
+            </div>
           </div>
         </div>
       </div>
