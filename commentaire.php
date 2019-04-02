@@ -12,15 +12,15 @@ catch (exception $e)
     die('Erreur : '.$e->getMessage());
 }
 
-// inserer des commentaire
-if(!empty($_POST)){
-  $req = $bdd->prepare('INSERT INTO commentaire(id_billet, auteur,comment, date_comment) VALUES (:id_billet, :auteur, :comment, NOW())');
-$req->execute([
-  "id_billet" => $_GET['billet'],
-  "auteur" => $_POST['auteur'],
-  "comment" => $_POST['comment']
-]);
+//moderation des commentaire
+if(isset($_GET['confirm']) AND !empty($_GET['confirm'])) {
+  $confirm = (int) $_GET['confirm'];
+  $req = $bdd->prepare('UPDATE commentaire SET confirm = 0 WHERE id = :id');
+  $req->execute([
+     "id" => $confirm
+  ]);
 }
+
 
 //recupere les donnees de la table
 $req= $bdd->prepare('SELECT id, titre, auteur, contenu, DATE_FORMAT(date_ajout, \'%d/%m/%Y à %Hh%imin%ss\')
@@ -116,6 +116,11 @@ $req->execute([
                 <p><strong><?= htmlspecialchars($comment['auteur']) ?></strong></p>
                 <p><?= htmlspecialchars($comment['comment']) ?></p> 
                 <p>le <?=$comment['date_comment_fr'] ?></p>
+                <?php if($comment['confirm'] == 1) { ?>
+                  <a href="commentaire.php?type=commentaire&confirm=<?= $comment['id'] ?>">Confirmer</a>
+                 <?php } else if($comment['confirm'] == 0) { ?>
+                  <a href="delete.php?billet=<?= $billet['id'] ?>"> Supprimer </a>
+                 <?php } ?>
                 <button><a href="delete.php?billet=<?= $comment['id'] ?>"> Supprimer </a></button>                  
               </div>
 <?php } ?>
