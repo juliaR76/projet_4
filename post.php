@@ -10,12 +10,34 @@ catch (exception $e)
     die('Erreur : '.$e->getMessage());
 }
 
+//signalement des commentaires 
+
+if(isset($_GET['confirm']) AND !empty($_GET['confirm'])) {
+  $confirm = (int) $_GET['confirm'];
+  $req = $bdd->prepare('UPDATE commentaire SET confirm = 1 WHERE id = :id');
+  $req->execute([
+     "id" => $confirm
+  ]);
+}
+
+// inserer des commentaires
+
+if(!empty($_POST)){
+  $req = $bdd->prepare('INSERT INTO commentaire (id_billet, auteur,comment, confirm, date_comment) VALUES (:id_billet, :auteur, :comment, 0, NOW())');
+$req->execute([
+  "id_billet" => $_GET['billet'],
+  "auteur" => $_POST['auteur'],
+  "comment" => $_POST['comment']
+]);
+}
+
 //recupere les donnees de la table
 $req = $bdd->prepare('SELECT id, titre, auteur, contenu, DATE_FORMAT(date_ajout, \'%d/%m/%Y à %Hh%imin\') 
 AS date_ajout_fr FROM billet WHERE id = :id');
 $req->execute([
     "id" => $_GET['billet']
 ]);
+$billet = $req->fetch();
 
 //recupere les commentaire
 
@@ -98,12 +120,16 @@ $req->execute(array(
             </p>
 
             <div class="collapse" id="collapseExample">
-              <div class="card card-body">
-              <?php while($comment = $req->fetch()){ ?>   
-                <p><strong><?= htmlspecialchars($comment['auteur']) ?></strong> le <?=$comment['date_comment_fr'] ?></p>
+<?php while($comment = $req->fetch()){ ?>
+              <div class="card card-body">             
+                <p><strong><?= htmlspecialchars($comment['auteur']) ?></strong></p>
                 <p><?= htmlspecialchars($comment['comment']) ?></p> 
-                <?php } ?>  
+                <p>le <?=$comment['date_comment_fr'] ?></p>
+                <?php if($comment['confirm'] == 0) { ?>
+                  <a href="post.php?type=commentaire&confirm=<?= $comment['id'] ?>">Signaler</a>
+                <?php } ?> 
               </div>
+<?php } ?>
             </div>
    
             <hr>         
