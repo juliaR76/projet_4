@@ -1,30 +1,29 @@
 <?php
-var_dump($_GET['billet']);
-try
-{
-//connexion base de donnee projet_4
-$bdd = new PDO('mysql:host=localhost; dbname=projet_4;charset=utf8', 'root', '');
-}
-catch (exception $e)
-{
-    die('Erreur : '.$e->getMessage());
-}
+
+require("poo/Billet.php");
+require("poo/BilletManager.php");
+
 
 //recupere les donnees de la table
-$req = $bdd->prepare('SELECT id, titre, auteur, contenu, DATE_FORMAT(date_ajout, \'%d/%m/%Y à %Hh%imin\') 
-AS date_ajout_fr FROM billet');
-$req->execute();
+$billetManager = new BilletManager;
+$billet = $billetManager->get($_GET['billet']);
 
 
-//mettre à jour les donnees
-if(!empty($_POST)){
-$req = $bdd->prepare('UPDATE billet SET titre = :titre, contenu = :contenu, date_ajout = NOW() WHERE id = :id');
-$req->execute([
-    "id" => $_GET['billet'],
-    "titre" => $_POST['titre'],
-    "contenu" => $_POST['contenu']
-]);
+//modifier le billet
+
+
+if(!empty($_POST)){ 
+    $billet = new Billet([
+        "id"=> $_GET['billet'],
+        "titre" => $_POST['titre'],
+        "contenu" => $_POST['contenu']
+    ]);
+    
+    $billetManager = new BilletManager;
+    $billetManager->update($billet);
+    
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -38,46 +37,66 @@ $req->execute([
     <title>Billet pour l'Alaska</title>
 </head>
 <body>
+<!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+        <div class="container">
+            <a class="navbar-brand" href="index.php">Jean Forteroche</a>
+            <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+             Menu
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.php">Retour au site</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="creation.php">Admin</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="connexion.php">Connexion</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
     <header class="masthead" style="background-image: url('img/Anchorage_3.jpg')">
         <div class="overlay"></div>
         <div class="container">
-          <div class="row">
-            <div class="col-lg-8 col-md-10 mx-auto">
-              <div class="site-heading">
-                <h1>Billet pour l'Alaska</h1>
-                <span class="subheading">Modifier votre billet</span>
-              </div>
+            <div class="row">
+                <div class="col-lg-8 col-md-10 mx-auto">
+                    <div class="site-heading">
+                        <h1>Billet simple pour l'Alaska</h1>
+                        <span class="subheading">Admin</span>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
     </header>
 
-<?php while($donnee = $req->fetch()){ ?>
     <div class="container">
         <a href="creation.php">Retour à l'Admin</a>
         <div class="row">
             <div class="col-lg-8 col-md-10 mx-auto">
-                <form action="update.php?billet=<?= $_GET['billet'] ?>" method="post">
+                <form action="update.php?billet=<?= $billet->id() ?>" method="post">
                     <div class="form-group">
                         <label for="exampleFormControlInput1">Auteur</label>
-                        <input type="text" class="form-control" name="auteur" placeholder="Auteur" value="<?= htmlspecialchars($donnee['auteur']) ?>">
+                        <input type="text" class="form-control" name="auteur" placeholder="Auteur" value="<?= htmlspecialchars($billet->auteur()) ?>">
                     </div>
                     <div class="form-group">
                         <label for="exampleFormControlInput1">Titre</label>
-                        <input type="text" class="form-control" name="titre" placeholder="Titre" value="<?= htmlspecialchars($donnee['titre']) ?>">
+                        <input type="text" class="form-control" name="titre" placeholder="Titre" value="<?= htmlspecialchars($billet->titre()) ?>">
                     </div>
                     <div class="form-group">
                         <label for="exampleFormControlTextarea1">Corps de texte</label>
-                        <textarea class="form-control" name="contenu" rows="10"><?= htmlspecialchars($donnee['contenu'])?></textarea>
+                        <textarea class="form-control" name="contenu" rows="10"><?= htmlspecialchars($billet->contenu()) ?></textarea>
                     </div>
-                    <button type="submit" class="btn btn-dark">Modifier</button>
-                    <button type="button" class="btn btn-dark"><a href="creation.php">Annuler</a></button>
+                        <a href="creation.php"><button type="submit" class="btn btn-dark">Modifier</button></a>
+                        <a href="creation.php"><button type="button" class="btn btn-dark">Annuler</button></a>
                 </form>
             </div>  
         </div>
     </div>
-    
-<?php } ?>
 
     <!-- Bootstrap core JavaScript -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
