@@ -1,20 +1,17 @@
 <?php 
+session_start();
 
-try{
-    $bdd = new PDO('mysql:host=localhost; dbname=projet_4;charset=utf8', 'root', '');
-}
-catch (exception $e){
-    die('Erreur : '.$e->getMessage());
-}
+require("model/Member.php");
+require("model/MemberManager.php");
+
+
 
 //  Récupération de l'utilisateur et de son pass hashé
+
 if(!empty($_POST)){
 
-$req = $bdd->prepare('SELECT id, pass FROM membre WHERE pseudo = :pseudo');
-$req->execute([
-'pseudo' => $_POST['pseudo']
-]);   
-$resultat = $req->fetch();
+    $memberManager = new MemberManager;
+    $member = $memberManager->get($_POST['pseudo']);
 
 
 $PasswordCorrect = password_verify($_POST['pass'], $resultat['pass']);
@@ -32,6 +29,7 @@ if (!$resultat){
     }
 }
 }
+?>
 
 ?>
 
@@ -47,31 +45,7 @@ if (!$resultat){
 </head>
 <body>
 <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
-        <div class="container">
-            <a class="navbar-brand" href="index.html">Jean Fastoche</a>
-                <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-                Menu
-                    <i class="fas fa-bars"></i>
-                </button>
-            <div class="collapse navbar-collapse" id="navbarResponsive">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html">Accueil</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="post.html">Articles</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="contact.html">Contact</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="connexion.html">Connexion</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+<?php include("view/menu.php")?>
 
 <!-- Page Header -->
     <header class="masthead" style="background-image: url('img/alaska_4.jpg')">
