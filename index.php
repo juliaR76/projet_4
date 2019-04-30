@@ -1,9 +1,9 @@
 <?php
 
-require("poo/Billet.php");
-require("poo/BilletManager.php");
-require("poo/Commentaire.php");
-require("poo/CommentaireManager.php");
+require("model/Billet.php");
+require("model/BilletManager.php");
+require("model/Commentaire.php");
+require("model/CommentaireManager.php");
 
 // recupere les billets
 
