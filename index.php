@@ -10,7 +10,6 @@ require("poo/CommentaireManager.php");
 $billetManager = new BilletManager; 
 $billet = $billetManager->getDate();
 
-
 ?>
 
 <!DOCTYPE html>
@@ -43,7 +42,6 @@ $billet = $billetManager->getDate();
   </header>
  
 <!-- Main Content -->
-
 
   <div class="container">
     <div class="row">
