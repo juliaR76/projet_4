@@ -1,7 +1,7 @@
 <?php
 
-require("poo/Billet.php");
-require("poo/BilletManager.php");
+require("model/Billet.php");
+require("model/BilletManager.php");
 
 
 //recupere les donnees de la table
