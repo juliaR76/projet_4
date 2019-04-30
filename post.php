@@ -1,51 +1,33 @@
 <?php
 
-try
-{
-//connexion base de donnee projet_4
-$bdd = new PDO('mysql:host=localhost; dbname=projet_4;charset=utf8', 'root', '');
-}
-catch (exception $e)
-{
-    die('Erreur : '.$e->getMessage());
-}
+require("poo/Billet.php");
+require("poo/BilletManager.php");
+require("poo/Commentaire.php");
+require("poo/CommentaireManager.php");
 
-//signalement des commentaires 
+// inserer des commentaire
 
-if(isset($_GET['confirm']) AND !empty($_GET['confirm'])) {
-  $confirm = (int) $_GET['confirm'];
-  $req = $bdd->prepare('UPDATE commentaire SET confirm = 1 WHERE id = :id');
-  $req->execute([
-     "id" => $confirm
+if(!empty($_POST)){ 
+  $commentaire = new Commentaire ([
+      "id_billet" => $_GET['billet'],
+      "auteur" => $_POST['auteur'],
+      "comment" => $_POST['comment']
   ]);
+  
+  $commentaireManager = new CommentaireManager;
+  $commentaire = $commentaireManager->add($commentaire);
 }
 
-// inserer des commentaires
+//recupere les  billets
 
-if(!empty($_POST)){
-  $req = $bdd->prepare('INSERT INTO commentaire (id_billet, auteur,comment, confirm, date_comment) VALUES (:id_billet, :auteur, :comment, 0, NOW())');
-$req->execute([
-  "id_billet" => $_GET['billet'],
-  "auteur" => $_POST['auteur'],
-  "comment" => $_POST['comment']
-]);
-}
+$billetManager = new BilletManager; 
+$billet = $billetManager->get($_GET['billet']);
 
-//recupere les donnees de la table
-$req = $bdd->prepare('SELECT id, titre, auteur, contenu, DATE_FORMAT(date_ajout, \'%d/%m/%Y à %Hh%imin\') 
-AS date_ajout_fr FROM billet WHERE id = :id');
-$req->execute([
-    "id" => $_GET['billet']
-]);
-$billet = $req->fetch();
 
-//recupere les commentaire
+//recupere les commentaires
 
-$req=$bdd->prepare('SELECT id, id_billet, auteur, comment, DATE_FORMAT(date_comment, \'%d/%m/%Y à %Hh%imin%ss\')
-AS date_comment_fr FROM commentaire WHERE id_billet=? ORDER BY date_comment');
-$req->execute(array(
-    $_GET['billet']
-));
+$commentaireManager = new CommentaireManager;
+$commentaires = $commentaireManager->get($_GET['billet']);
 
 ?>
 
@@ -64,28 +46,7 @@ $req->execute(array(
 <body>
 
   <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
-    <div class="container">
-      <a class="navbar-brand" href="index.html">Jean Fastoche</a>
-      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-        Menu
-        <i class="fas fa-bars"></i>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="index.php">Accueil</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="contact.html">contact</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="connexion.html">Connexion</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+  <?php include("view/menu.php")?>
 
   <!-- Page Header -->
   <header class="masthead" style="background-image: url('img/alaska_4.jpg')">
@@ -94,8 +55,8 @@ $req->execute(array(
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
           <div class="post-heading">
-            <h1><?= htmlspecialchars($billet['titre']) ?></h1>
-            <span class="meta"><?= htmlspecialchars($billet['auteur']) ?></span>
+            <h1><?= htmlspecialchars($billet->titre()) ?></h1>
+            <span class="meta"><?= htmlspecialchars($billet->auteur()) ?></span>
           </div>
         </div>
       </div>
@@ -108,28 +69,26 @@ $req->execute(array(
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
           <div class="post-preview">
-            <a href="post.php?billet=<?= $billet['id'] ?>">
-              <h2 class="post-title"><?= htmlspecialchars($billet['titre']) ?></h2>
+            <a href="post.php?billet=<?= $billet->id() ?>">
+              <h2 class="post-title"><?= htmlspecialchars($billet->titre()) ?></h2>
             </a>
-            <p><?= htmlspecialchars($billet['contenu'])?></p>
-            <p class="post-meta">Posted by <?= htmlspecialchars($billet['auteur']) ?>, le <?= htmlspecialchars($billet['date_ajout_fr']) ?></p>
-            <p>
-              <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                <i class="far fa-comment-alt"></i>
-              </button>
-            </p>
+            <p><?= htmlspecialchars($billet->contenu())?></p>
+            <p class="post-meta">Posted by <?= htmlspecialchars($billet->auteur()) ?>, le <?= htmlspecialchars($billet->date_ajout()) ?></p>
 
-            <div class="collapse" id="collapseExample">
-<?php while($comment = $req->fetch()){ ?>
-              <div class="card card-body">             
-                <p><strong><?= htmlspecialchars($comment['auteur']) ?></strong></p>
-                <p><?= htmlspecialchars($comment['comment']) ?></p> 
-                <p>le <?=$comment['date_comment_fr'] ?></p>
-                <?php if($comment['confirm'] == 0) { ?>
-                  <a href="post.php?type=commentaire&confirm=<?= $comment['id'] ?>">Signaler</a>
+<?php
+  foreach ($commentaires as $commentaire) { ?>
+
+              <div class="card card-body">
+                 
+                <p><strong><?= htmlspecialchars($commentaire->auteur()) ?></strong></p>
+                <p><?= htmlspecialchars($commentaire->comment()) ?></p> 
+                <p>le <?= $commentaire->date_comment() ?></p>
+                <?php if($commentaire->confirm()){ ?>
+                  <a href="post.php?type=commentaire&confirm=<?= $commentaire->id() ?>">Signaler</a>
                 <?php } ?> 
               </div>
-<?php } ?>
+
+<?php  } ?>
             </div>
    
             <hr>         
