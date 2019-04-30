@@ -1,42 +1,23 @@
 <?php
 
-session_start();
+require("poo/Billet.php");
+require("poo/BilletManager.php");
+require("poo/Commentaire.php");
+require("poo/CommentaireManager.php");
 
-try
-{
-//connexion base de donnee projet_4
-$bdd = new PDO('mysql:host=localhost; dbname=projet_4;charset=utf8', 'root', '');
+
+
+//recupere le billet
+$billetManager = new BilletManager; 
+$billet = $billetManager->get($_GET['billet']);
+
+
+//recupere les commentaires du billet
+if(empty($_POST)){
+  
+  $commentaireManager = new CommentaireManager;
+  $commentaires = $commentaireManager->get($_GET['billet']);
 }
-catch (exception $e)
-{
-    die('Erreur : '.$e->getMessage());
-}
-
-//moderation des commentaire
-if(isset($_GET['confirm']) AND !empty($_GET['confirm'])) {
-  $confirm = (int) $_GET['confirm'];
-  $req = $bdd->prepare('UPDATE commentaire SET confirm = 0 WHERE id = :id');
-  $req->execute([
-     "id" => $confirm
-  ]);
-}
-
-
-//recupere les donnees de la table
-$req= $bdd->prepare('SELECT id, titre, auteur, contenu, DATE_FORMAT(date_ajout, \'%d/%m/%Y à %Hh%imin%ss\')
-AS date_ajout_fr FROM billet WHERE id = :id');
-$req->execute([
-    "id" => $_GET['billet'] 
-]);
-$billet = $req->fetch();
-
-//recupere les commentaire
-
-$req=$bdd->prepare('SELECT id, id_billet, auteur, comment, DATE_FORMAT(date_comment, \'%d/%m/%Y à %Hh%imin%ss\')
-AS date_comment_fr FROM commentaire WHERE id_billet=? ');
-$req->execute([
-    $_GET['billet']
-]);
 
 ?>
 
@@ -84,8 +65,8 @@ $req->execute([
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
           <div class="post-heading">
-            <h1><?= htmlspecialchars($billet['titre']) ?></h1>
-            <span class="meta"><?= htmlspecialchars($billet['auteur']) ?></span>
+            <h1><?= htmlspecialchars($billet->titre()) ?></h1>
+            <span class="meta"><?= htmlspecialchars($billet->auteur()) ?></span>
           </div>
         </div>
       </div>
@@ -98,33 +79,31 @@ $req->execute([
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
           <div class="post-preview">
-            <a href="post.php?billet=<?= $billet['id'] ?>">
-              <h2 class="post-title"><?= htmlspecialchars($billet['titre']) ?></h2>
+            <a href="post.php?billet=<?= $billet->id() ?>">
+              <h2 class="post-title"><?= htmlspecialchars($billet->titre()) ?></h2>
             </a>
-            <p><?= htmlspecialchars($billet['contenu'])?></p>
-            <p class="post-meta">Posted by <?= htmlspecialchars($billet['auteur']) ?>, le <?= htmlspecialchars($billet['date_ajout_fr']) ?></p>
+            <p><?= htmlspecialchars($billet->contenu()) ?></p>
+            <p class="post-meta">Posted by <?= htmlspecialchars($billet->auteur()) ?>, le <?= htmlspecialchars($billet->date_ajout()) ?></p>
             <p>
               <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
                 <i class="far fa-comment-alt"></i>
               </button>
             </p>
-
+<?php foreach ($commentaires as $commentaire) { ?>
             <div class="collapse" id="collapseExample">
-<?php while($comment = $req->fetch()){ ?>
-              <div class="card card-body">
-                 
-                <p><strong><?= htmlspecialchars($comment['auteur']) ?></strong></p>
-                <p><?= htmlspecialchars($comment['comment']) ?></p> 
-                <p>le <?=$comment['date_comment_fr'] ?></p>
-                <?php if($comment['confirm'] == 1) { ?>
-                  <a href="commentaire.php?type=commentaire&confirm=<?= $comment['id'] ?>">Confirmer</a>
-                 <?php } else if($comment['confirm'] == 0) { ?>
-                  <a href="delete.php?billet=<?= $billet['id'] ?>"> Supprimer </a>
+
+              <div class="card card-body">     
+                <p><strong><?= htmlspecialchars($commentaire->auteur()) ?></strong></p>
+                <p><?= htmlspecialchars($commentaire->comment()) ?></p> 
+                <p>le <?= $commentaire->date_comment() ?></p>
+                <?php if($commentaire->confirm() == 1) { ?>
+                  <a href="commentaire.php?type=commentaire&confirm=<?= $commentaire->id() ?>">Confirmer</a>
+                 <?php } else if($commentaire->confirm()) { ?>
+                    <a href="delete.php?billet=<?= $commentaire->id() ?>"> Supprimer </a>
                  <?php } ?>
-                <button><a href="delete.php?billet=<?= $comment['id'] ?>"> Supprimer </a></button>                  
               </div>
 <?php } ?>
-            </div>                    
+            </div>          
           </div>
         </div>
       </div>
