@@ -1,9 +1,8 @@
 <?php
 
 require("poo/Billet.php");
-require("poo/Commentaire.php");
-
 require("poo/BilletManager.php");
+require("poo/Commentaire.php");
 require("poo/CommentaireManager.php");
 
 
