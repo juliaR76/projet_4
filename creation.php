@@ -1,34 +1,28 @@
 <?php
-var_dump($_POST);
 
-try
-{
-    //connexion base de donnee projet_4
-$bdd = new PDO('mysql:host=localhost; dbname=projet_4;charset=utf8', 'root', '');
-}
-catch (exception $e)
-{
-    die('Erreur : '.$e->getMessage());
-}
+require('poo/Billet.php');
+require('poo/BilletManager.php');
 
-//insertion du billet dans la table
 
-if(!empty($_POST)){
-    $req = $bdd->prepare('INSERT INTO billet (id, titre, auteur, contenu, date_ajout)VALUES (:id, :titre, :auteur, :contenu, NOW())');
-    $req->execute([
-        "id" => $_GET['billet'],
-        "titre" => $_POST['titre'],
-        "auteur" => $_POST['auteur'],
-        "contenu" => $_POST['contenu']
-    
-    ]);
+//insertion du billet dans la table billet
+
+if(!empty($_POST)){ 
+$billet = new Billet([
+    "titre" => $_POST['titre'],
+    "auteur" => $_POST['auteur'],
+    "contenu" => $_POST['contenu']
+]);
+
+$billetManager = new BilletManager;
+$billetManager->add($billet);
+
 }
 
-//recuperer le contenue de la table 
-$req = $bdd->prepare('SELECT id, titre, auteur, contenu, DATE_FORMAT(date_ajout, \'%d/%m/%Y à %Hh%imin\') 
-AS date_ajout_fr
-FROM billet ');
-$req->execute();
+//recuperer le contenue de la table billet
+
+$billetManager = new BilletManager;
+$billets = $billetManager->getList();
+
 ?>
 
 
@@ -43,7 +37,44 @@ $req->execute();
     <title>Billet pour l'Alaska</title>
 </head>
 <body>
+<!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+        <div class="container">
+            <a class="navbar-brand" href="index.php">Jean Forteroche</a>
+            <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+             Menu
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.php">Retour au site</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="creation.php">Admin</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="deconnexion.php">Deconnexion</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <header class="masthead" style="background-image: url('img/Anchorage_3.jpg')">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-10 mx-auto">
+                    <div class="site-heading">
+                        <h1>Billet simple pour l'Alaska</h1>
+                        <span class="subheading">Admin</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
     <div class="container">
+        <a href="index.php">Retour au site</a>
         <div class="row">
             <div class="col-lg-8 col-md-10 mx-auto">
                 <h2>Billet(s) publié(s)</h2>
@@ -55,19 +86,21 @@ $req->execute();
                         <th scope="col">Contenu</th>
                         <th scope="col">Auteur</th>
                         <th scope="col">Date</th>
+                        <th scope="col">Commentaire</th>
                         <th scope="col"></th>
                         <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
-<?php while($donnee = $req->fetch()){ ?>
+<?php foreach ($billets as $billet) { ?>
                         <tr>
-                            <td><?= $donnee['titre'] ?></td>
-                            <td><?= $donnee['contenu'] ?></td>
-                            <td><?= $donnee['auteur'] ?></td>
-                            <td><?= $donnee['date_ajout_fr'] ?></td>
-                            <td><a href="update.php?billet=<?= $donnee['id'] ?>"> Modifier </a></td>
-                            <td><a href="delete.php?billet=<?= $donnee['id'] ?>"> Supprimer </a></td>
+                            <td><?= $billet->titre() ?></td>
+                            <td class="contenu_billet"><?= substr($billet->contenu(),0,25) ?></td>
+                            <td><?= $billet->auteur() ?></td>
+                            <td><?= $billet->date_ajout() ?></td>
+                            <td><i class="far fa-comment-alt"></i><a href="commentaire.php?billet=<?= $billet->id() ?>"> Voir </a></td>
+                            <td><a href="update.php?billet=<?= $billet->id() ?>"> Modifier </a></td>
+                            <td><a href="delete.php?billet=<?= $billet->id() ?>"> Supprimer </a></td>
                         </tr>
                     </tbody>
 <?php } ?>
@@ -92,14 +125,14 @@ $req->execute();
                         <input type="text" class="form-control" name="titre" placeholder="Titre">
                     </div>
                     <div class="form-group">
-                        <label for="exampleFormControlTextarea1">Example textarea</label>
+                        <label for="exampleFormControlTextarea1">Corps de texte</label>
                         <textarea class="form-control" name="contenu" rows="10"></textarea>
                     </div>
-                    <button type="submit" class="btn btn-dark">Publier</button>
+                    <a href="creation.php"><button type="submit" class="btn btn-dark">Publier</button></a>
                 </form>
             </div>  
         </div>
-    </div>              
+    </div>               
 
     <!-- Bootstrap core JavaScript -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
