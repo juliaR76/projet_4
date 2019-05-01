@@ -5,6 +5,14 @@ require("model/BilletManager.php");
 require("model/Commentaire.php");
 require("model/CommentaireManager.php");
 
+// signaler 
+
+if(isset($_GET['confirm']) AND !empty($_GET['confirm'])) {
+  // $confirm = (int) $_GET['confirm'];
+  $commentaireManager = new CommentaireManager;
+  $commentaire = $commentaireManager->signal($_GET['confirm']);
+}
+
 // inserer des commentaire
 
 if(!empty($_POST)){ 
@@ -83,9 +91,11 @@ $commentaires = $commentaireManager->get($_GET['billet']);
                 <p><strong><?= htmlspecialchars($commentaire->auteur()) ?></strong></p>
                 <p><?= htmlspecialchars($commentaire->comment()) ?></p> 
                 <p>le <?= $commentaire->date_comment() ?></p>
-                <?php if($commentaire->confirm()){ ?>
-                  <a href="post.php?type=commentaire&confirm=<?= $commentaire->id() ?>">Signaler</a>
-                <?php } ?> 
+                <?php if($commentaire->confirm() == 0) { ?>
+                <a href="post.php?commentaire&confirm=<?= $commentaire->id() ?>">Signaler</a>
+                <?php } else { ?>
+                <p>Ce commentaire a été signaler !</p>
+                <?php } ?> > 
               </div>
 
 <?php  } ?>
@@ -95,7 +105,7 @@ $commentaires = $commentaireManager->get($_GET['billet']);
 <!--commentaire-->
             <div class="collapse" id="collapseExample">
               <div class="card card-body">  
-                <form action= "post.php?billet=<?= $_GET['billet'] ?>" method= "post">
+                <form action= "post.php?billet=<?= $billet->id() ?>" method= "post">
                   <div class="form-group">
                     <label for="formGroupExampleInput">Pseudo</label>
                     <input type="text" name= "auteur" class="form-control" id="formGroupExampleInput" placeholder="Example input">
@@ -104,8 +114,7 @@ $commentaires = $commentaireManager->get($_GET['billet']);
                     <label for="formGroupExampleInput2">Commentaire</label>
                     <input type="text" name= "comment"class="form-control" id="formGroupExampleInput2" placeholder="Another input">
                   </div>
-                  <button type="submit" class="btn btn-primary">Publier</button>
-                  <button type="button" class="btn btn-primary">Annuler</button>
+                  <a href="post.php?billet=<?= $billet->id() ?>"><button type="submit" class="btn btn-primary">Publier</button></a>
                 </form>  
               </div>
             </div>            
