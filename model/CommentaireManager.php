@@ -44,6 +44,26 @@ class CommentaireManager
         
     }
 
+    public function signal($signal)
+    {   
+        $req = $this->db->prepare('UPDATE commentaire SET confirm = 1 WHERE id = :id');
+        $req->execute([
+            "id" => $signal
+        ]);
+        $data = $req->fetch(PDO::FETCH_ASSOC);
+        return $data;
+    }
+
+    public function valider($valid)
+    {   
+        $req = $this->db->prepare('UPDATE commentaire SET confirm = 0 WHERE id = :id');
+        $req->execute([
+            "id" => $valid
+        ]);
+        $data = $req->fetch(PDO::FETCH_ASSOC);
+        return $data;
+    }
+
     public function delete($id){
         $req = $this->db->prepare('DELETE FROM commentaire WHERE id = :id');
         $req->execute([
