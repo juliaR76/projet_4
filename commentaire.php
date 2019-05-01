@@ -6,6 +6,12 @@ require("model/Commentaire.php");
 require("model/CommentaireManager.php");
 
 
+//moderation de commentaire
+
+if(isset($_GET['confirm']) AND !empty($_GET['confirm'])) {
+  $commentaireManager = new CommentaireManager;
+  $commentaire = $commentaireManager->valider($_GET['confirm']);
+}
 
 //recupere le billet
 $billetManager = new BilletManager; 
@@ -98,7 +104,8 @@ if(empty($_POST)){
                 <p>le <?= $commentaire->date_comment() ?></p>
                 <?php if($commentaire->confirm() == 1) { ?>
                   <a href="commentaire.php?type=commentaire&confirm=<?= $commentaire->id() ?>">Confirmer</a>
-                 <?php } else if($commentaire->confirm()) { ?>
+                 <?php } else if($commentaire->confirm() == 0) { ?>
+                    <p>Commentaire valider</p>
                     <a href="delete.php?billet=<?= $commentaire->id() ?>"> Supprimer </a>
                  <?php } ?>
               </div>
