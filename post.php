@@ -1,14 +1,14 @@
 <?php
 
-require("model/Billet.php");
-require("model/BilletManager.php");
 require("model/Commentaire.php");
 require("model/CommentaireManager.php");
+require("model/Billet.php");
+require("model/BilletManager.php");
+
 
 // signaler 
 
 if(isset($_GET['confirm']) AND !empty($_GET['confirm'])) {
-  // $confirm = (int) $_GET['confirm'];
   $commentaireManager = new CommentaireManager;
   $commentaire = $commentaireManager->signal($_GET['confirm']);
 }
@@ -26,31 +26,30 @@ if(!empty($_POST)){
   $commentaire = $commentaireManager->add($commentaire);
 }
 
+//recupere les commentaires
+
+$commentaireManager = new CommentaireManager;
+$commentaires = $commentaireManager->get($_GET['billet']);
+
 //recupere les  billets
 
 $billetManager = new BilletManager; 
 $billet = $billetManager->get($_GET['billet']);
 
 
-//recupere les commentaires
-
-$commentaireManager = new CommentaireManager;
-$commentaires = $commentaireManager->get($_GET['billet']);
-
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
- <title>Billet pour l'Alaska</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    <title>Billet simple pour l'Alaska</title>
 </head>
-
 <body>
 
   <!-- Navigation -->
@@ -83,41 +82,35 @@ $commentaires = $commentaireManager->get($_GET['billet']);
             <p><?= htmlspecialchars($billet->contenu())?></p>
             <p class="post-meta">Posted by <?= htmlspecialchars($billet->auteur()) ?>, le <?= htmlspecialchars($billet->date_ajout()) ?></p>
 
-<?php
-  foreach ($commentaires as $commentaire) { ?>
+<?php  foreach ($commentaires as $commentaire) { ?>
 
               <div class="card card-body">
-                 
                 <p><strong><?= htmlspecialchars($commentaire->auteur()) ?></strong></p>
                 <p><?= htmlspecialchars($commentaire->comment()) ?></p> 
                 <p>le <?= $commentaire->date_comment() ?></p>
-                <?php if($commentaire->confirm() == 0) { ?>
+              <?php if($commentaire->confirm() == 0) { ?>
                 <a href="post.php?commentaire&confirm=<?= $commentaire->id() ?>">Signaler</a>
-                <?php } else { ?>
+              <?php } else { ?>
                 <p>Ce commentaire a été signaler !</p>
-                <?php } ?> > 
+              <?php } ?> 
               </div>
 
 <?php  } ?>
-            </div>
-   
             <hr>         
 <!--commentaire-->
-            <div class="collapse" id="collapseExample">
               <div class="card card-body">  
                 <form action= "post.php?billet=<?= $billet->id() ?>" method= "post">
                   <div class="form-group">
                     <label for="formGroupExampleInput">Pseudo</label>
-                    <input type="text" name= "auteur" class="form-control" id="formGroupExampleInput" placeholder="Example input">
+                    <input type="text" name= "auteur" class="form-control" id="formGroupExampleInput" placeholder="Pseudo">
                   </div>
                   <div class="form-group">
                     <label for="formGroupExampleInput2">Commentaire</label>
-                    <input type="text" name= "comment"class="form-control" id="formGroupExampleInput2" placeholder="Another input">
+                    <input type="text" name= "comment"class="form-control" id="formGroupExampleInput2" placeholder="commentaire">
                   </div>
-                  <a href="post.php?billet=<?= $billet->id() ?>"><button type="submit" class="btn btn-primary">Publier</button></a>
+                  <a href="post.php?billet=<?= $billet->id() ?>"><button type="submit" class="btn btn-primary">Publier</button></a> 
                 </form>  
-              </div>
-            </div>            
+              </div>            
           </div>
         </div>
       </div>
