@@ -10,6 +10,16 @@ require("model/CommentaireManager.php");
 $billetManager = new BilletManager; 
 $billet = $billetManager->getDate();
 
+
+//compter les commentaire
+
+
+$commentaireManager = new CommentaireManager;
+$nbCommentaire = $commentaireManager->count($_GET['id']);
+var_dump($nbCommentaire);
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -52,7 +62,7 @@ $billet = $billetManager->getDate();
           </a>
           <p><?= htmlspecialchars($billet->contenu())?></p>
           <p class="post-meta">Posted by <?= htmlspecialchars($billet->auteur()) ?>, le <?= htmlspecialchars($billet->date_ajout()) ?></p>
-          <i class="far fa-comment-alt"></i><a href="post.php?billet=<?= $billet->id() ?>"> commentaires</a>
+          <i class="far fa-comment-alt"></i><a href="post.php?billet=<?= $billet->id() ?>"> <?= $nbCommentaire ?> commentaires</a>
           <hr>
         </div>
       </div>
