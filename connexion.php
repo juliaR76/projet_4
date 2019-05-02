@@ -82,7 +82,7 @@ if (!$resultat){
                     <br>
                     <div id="success"></div>
                         <div class="form-group">
-                            <a href="creation.php"><button type="submit" class="btn btn-primary" id="sendMessageButton">Connecter</button></a>
+                        <button class="btn btn-primary"><a href="creation.php">Connecter</a></button>
                         </div>
                 </form>
             </div>
