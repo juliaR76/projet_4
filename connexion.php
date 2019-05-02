@@ -31,8 +31,6 @@ if (!$resultat){
 }
 ?>
 
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -84,7 +82,7 @@ if (!$resultat){
                     <br>
                     <div id="success"></div>
                         <div class="form-group">
-                            <button type="submit" class="btn btn-primary" id="sendMessageButton"><a href="creation.php">Connecter</a></button>
+                            <a href="creation.php"><button type="submit" class="btn btn-primary" id="sendMessageButton">Connecter</button></a>
                         </div>
                 </form>
             </div>
