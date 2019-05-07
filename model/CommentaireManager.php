@@ -64,15 +64,15 @@ class CommentaireManager
         return $data;
     }
 
-    public function count($id)
-    {
-        $req = $this->db->prepare('SELECT COUNT(*) AS nbCommentaire FROM commentaire WHERE id_billet = 25');
-        $req->execute([
-            "id_billet" => $id
-        ]);
-        $data = $req->fetch(PDO::FETCH_ASSOC);
-        return $data['nbCommentaire'];
-    }
+    // public function count($id)
+    // {
+    //     $req = $this->db->prepare('SELECT COUNT(*) AS nbCommentaire FROM commentaire WHERE id_billet = 25');
+    //     $req->execute([
+    //         "id_billet" => $id
+    //     ]);
+    //     $data = $req->fetch(PDO::FETCH_ASSOC);
+    //     return $data['nbCommentaire'];
+    // }
 
     public function delete($id){
         $req = $this->db->prepare('DELETE FROM commentaire WHERE id = :id');

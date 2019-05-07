@@ -1,5 +1,6 @@
 <?php
 
+
 class Billet
 {
     private $_id,
