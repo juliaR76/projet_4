@@ -17,6 +17,7 @@ function home(){
     // var_dump($nbCommentaire);
 
     $title = 'Billet simple pour l\'Alaska';
+    $sousTitre = "de Jean Forteroche";
 
     require('view/home.php');
 
@@ -30,8 +31,10 @@ function billets()
     $billetManager = new BilletManager;
     $billets = $billetManager->getList();
     $title = 'Tout vos épisodes !';
+    $sousTitre = ' de Jean Forteroche';
 
     require('view/billets.php');
+    require('view/creation.php');
 
 }
 
@@ -68,6 +71,7 @@ function post()
     $billet = $billetManager->get($_GET['billet']);
 
     $title =  htmlspecialchars($billet->titre());
+    $sousTitre = htmlspecialchars($billet->auteur());
 
     require('view/post.php');
 
