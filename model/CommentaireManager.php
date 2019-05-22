@@ -64,17 +64,24 @@ class CommentaireManager
         return $data;
     }
 
-    // public function count($id)
-    // {
-    //     $req = $this->db->prepare('SELECT COUNT(*) AS nbCommentaire FROM commentaire WHERE id_billet = 25');
-    //     $req->execute([
-    //         "id_billet" => $id
-    //     ]);
-    //     $data = $req->fetch(PDO::FETCH_ASSOC);
-    //     return $data['nbCommentaire'];
-    // }
+    public function comList()
+    {
+        $data = [];
+        $req = $this->db->prepare('SELECT id, id_billet, auteur, comment, confirm, DATE_FORMAT(date_comment, \'%d/%m/%Y à %Hh%imin%ss\')
+        AS date_comment FROM commentaire WHERE confirm = 1');
+        $req->execute();
 
-    public function delete($id){
+            while($commentaire = $req->fetch())
+            {
+                $data[] = new Commentaire($commentaire);
+            }
+    
+            return $data;
+    }
+
+
+    public function delete($id)
+    {
         $req = $this->db->prepare('DELETE FROM commentaire WHERE id = :id');
         $req->execute([
             "id" => $id

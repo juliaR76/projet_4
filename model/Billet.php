@@ -89,10 +89,10 @@ class Billet
 
     public function setContenu($contenu)
     {
-        if(is_string($contenu))
-        {
+        
+        
             $this->_contenu = $contenu;
-        }
+        
     }
 
     public function setDate_ajout($date_ajout)

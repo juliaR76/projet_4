@@ -24,20 +24,19 @@ class BilletManager
         $req->execute([
             "titre" => $ajout->titre(),
             "auteur" => $ajout->auteur(),
-            "contenu" => $ajout->contenu()
+            "contenu" => $ajout->contenu(),
         ]);
     }
    
 
     public function get($id)
     {
-        $req = $this->db->prepare('SELECT id, titre, auteur, contenu, DATE_FORMAT(date_ajout, \'%d/%m/%Y à %Hh%imin\') AS date_ajout FROM billet WHERE id = :id');
+        $req = $this->db->prepare('SELECT id, titre, auteur, contenu, DATE_FORMAT(date_ajout, \'%d/%m/%Y à %Hh%imin\') AS date_ajout FROM billet  WHERE id = :id');
         $req->execute([
             "id" => $id
         ]);
         $data = $req->fetch(PDO::FETCH_ASSOC);
         return new Billet($data);
-
     }
 
     public function getDate()
@@ -52,7 +51,7 @@ class BilletManager
     public function getList()
     {
         $data = [];
-        $req = $this->db->prepare('SELECT id, titre, auteur, contenu, DATE_FORMAT(date_ajout, \'%d/%m/%Y à %Hh%imin\') AS date_ajout_fr FROM billet ORDER BY date_ajout DESC');
+        $req = $this->db->prepare('SELECT id, titre, auteur, contenu, DATE_FORMAT(date_ajout, \'%d/%m/%Y à %Hh%imin\') AS date_ajout FROM billet ORDER BY date_ajout DESC');
         $req->execute();
         while($billet = $req->fetch())
         {

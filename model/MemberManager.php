@@ -20,20 +20,24 @@ class MemberManager
     {
         $req = $this->db->prepare('INSERT INTO membre(pseudo, pass, email, date_inscription) VALUES (:pseudo, :pass, :email, CURDATE())');
         $req->execute([
-        'pseudo' => $user->pseudo(),
-        'pass' => $user->pass(), 
-        'email' => $user->email() 
-    ]);
+            'pseudo' => $user->pseudo(),
+            'pass' => $user->pass(), 
+            'email' => $user->email() 
+        ]);
     }
 
-    public function get($pseudo)
+    public function get($pseudo, $pass)
     {
-        $req = $bdd->prepare('SELECT id, pass FROM membre WHERE pseudo = :pseudo');
+        $req = $this->db->prepare('SELECT id, pseudo, pass FROM membre WHERE pseudo = :pseudo AND pass = :pass');
         $req->execute([
-        'pseudo' => $pseudo
+            'pseudo' => $pseudo,
+            'pass' => $pass
         ]); 
-        $data = $req->fetch(PDO::FETCH_ASSOC);
-        return new Member($data);
-    }
-    
+        if($data = $req->fetch(PDO::FETCH_ASSOC)){   
+            
+            header('location: index.php?action=creation');
+        }else{
+            echo "<script>alert(\"Mauvais identifiant ou mot de pass!\")</script>";
+        }
+    }   
 }

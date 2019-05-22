@@ -1,3 +1,35 @@
+<?php 
+if(!empty($_SESSION))
+{
+  $log = '<li class="nav-item">
+            <a class="nav-link" href="index.php">Accueil du site</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Bonjour'.' '.$_SESSION['pseudo'].'</a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="index.php?action=creation">Admin</a>
+              <a class="dropdown-item" href="index.php?action=billets">Tout les billets</a>
+              <a class="dropdown-item" href="index.php?action=deconnexion">Deconnexion</a>
+            </div>
+          </li>';
+}else
+{
+  $log = '<li class="nav-item">
+            <a class="nav-link" href="index.php">Accueil</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="index.php?action=billets">Tout les billets</a>        
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="index.php?action=contact">Contact</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="index.php?action=connexion">Connexion</a>
+          </li>';
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -7,6 +39,12 @@
     <link rel="stylesheet" href="public/css/style.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    <script src="https://cloud.tinymce.com/5/tinymce.min.js?apiKey=2y78n40ius7vughan8q8sfql8nml9nmphby5042rx7rz77ox"></script>
+    <script type="text/javascript">
+      tinymce.init({
+          selector: '#myTextarea',
+      });
+    </script>
     <title>Billet simple pour l'Alaska</title>
 </head>
 <body>
@@ -21,25 +59,14 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="index.php?action=home">Accueil</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="index.php?action=billets">Tout les billets</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="index.php?action=contact">Contact</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="index.php?action=connexion">Connexion</a>
-          </li>
+          <?= $log ?>
         </ul>
       </div>
     </div>
   </nav>
  
 <!-- Page Header -->
-  <header class="masthead" style="background-image: url('public/img/Anchorage_3.jpg')">
+  <header class="masthead" style="background-image: url('public/img/alaska_4.jpg')">
     <div class="overlay"></div>
     <div class="container">
       <div class="row">

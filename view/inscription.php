@@ -1,42 +1,39 @@
-<?php
-
-require("model/Member.php");
-require("model/MemberManager.php");
-
-
-// ajout membre
-
-if(!empty($_POST)){
-
-    $user = new Member([
-        'pseudo' => $_POST['pseudo'],
-        'pass' => password_hash($_POST['pass'], PASSWORD_DEFAULT),
-        'email' => $_POST['email']
-    ]);
-
-    $memberManager = new MemberManager;
-    $member = $memberManager->add($user);
-}
-
-?>
-
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>Espace membre</title>
-    <link href="style.css" rel="stylesheet">
-    
-<body>
-
-    <h1>Espace membres</h1>
-    <h2>Inscription</h2>
-        <form action="inscription.php" method="post">
-                <p>Pseudo: <input id="pseudo" type="text" name="pseudo"placeholder="pseudo"></p>
-                <p>Mot de passe: <input type="password" name="pass" placeholder="mot de passe"></p>
-                <p>confirmer: <input id ="confirm" type="password" name="confimation_pass" placeholder="confirmer mot de passe"></p>
-                <p>Email: <input id="email" type="email" name="email" placeholder="email"></p>
-                <p><a href="connexion.php"><button type="submit">Envoyer</button></a></p>
-        </form>
-</body>
-</html>
+<!-- Main Content -->
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+            <?php if(isset($erreur)){ echo $erreur;} ?>
+                <form action="index.php?action=inscription" method="post" name="sentMessage" id="contactForm" novalidate>
+                    <div class="control-group">
+                        <div class="form-group floating-label-form-group controls">
+                            <label>Pseudo</label>
+                            <input type="text" name="pseudo" class="form-control" placeholder="Pseudo" id="pseudo" value="<?php if(isset($pseudo)){ echo $pseudo; } ?>">
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="form-group floating-label-form-group controls">
+                            <label>Mot de pass</label>
+                            <input type="password" name="pass" placeholder="mot de passe" class="form-control" id="pass">
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="form-group floating-label-form-group controls">
+                            <label>Confirmer votre mot de pass</label>
+                            <input type="password" name="confirmationPass" placeholder="confirmer mot de passe" class="form-control" id="pass">
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="form-group floating-label-form-group controls">
+                            <label>Email</label>
+                            <input type="email" name="email" class="form-control" placeholder="Email" id="Email" value="<?php if(isset($email)){ echo $email; } ?>">
+                        </div>
+                    </div>
+                    <br>
+                    <div id="success"></div>
+                        <div class="form-group">
+                        <a href="index.php?action=connexion"><button type="submit" name="creerCompte" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Créer un compte</button></a>
+                        </div>
+                </form>
+            </div>
+        </div>
+    </div>
